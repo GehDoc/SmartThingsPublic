@@ -15,61 +15,61 @@
  *  Author: Gérald Hameau
  */
 definition(
-    name: "Keep me dry",
-    namespace: "GehDoc",
-    author: "Gérald Hameau",
-    description: "Fan should switch on to dry the room, only if possible regarding the surrounding humidity level.",
-    category: "Green Living",
-    iconUrl: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo.png",
-    iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@2x.png"
+  name: "Keep me dry",
+  namespace: "GehDoc",
+  author: "Gérald Hameau",
+  description: "Fan should switch on to dry the room, only if possible regarding the surrounding humidity level.",
+  category: "Green Living",
+  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo.png",
+  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@2x.png"
 )
 
 preferences {
-	section("Aim for this humidity percentage at this location") {
-		input "humiditySensor1", "capability.relativeHumidityMeasurement", title: 'Monitored sensor', required: true
-    	input "humidityMin", "number", title: "Target % of humidity", required: true
-		input "humidityMax", "number", title: "Turn on the fan from that % of humidity", required: true
-	}
-    section("The target humidity percentage cannot be lower than") {
-		input "humiditySensorReference", "capability.relativeHumidityMeasurement", title: 'Reference sensor', required: true
-		input "referenceHumidityTreshold", "number", title: "Tolerate that % offset (target + offset > reference)", required: true
-	}
-	section("Control the fan") {
-		input "switch1", "capability.switch", title: 'Fan control switch', required: true
-	}
+  section("Aim for this humidity percentage at this location") {
+    input "humiditySensor1", "capability.relativeHumidityMeasurement", title: 'Monitored sensor', required: true
+    input "humidityMin", "number", title: "Target % of humidity", required: true
+    input "humidityMax", "number", title: "Turn on the fan from that % of humidity", required: true
+  }
+  section("The target humidity percentage cannot be lower than") {
+    input "humiditySensorReference", "capability.relativeHumidityMeasurement", title: 'Reference sensor', required: true
+    input "referenceHumidityTreshold", "number", title: "Tolerate that % offset (target + offset > reference)", required: true
+  }
+  section("Control the fan") {
+    input "switch1", "capability.switch", title: 'Fan control switch', required: true
+  }
 }
 
 def initialize() {
-	subscribe(humiditySensor1, "humidity", humidityHandler)
-    subscribe(humiditySensorReference, "humidity", humidityHandler)
+  subscribe(humiditySensor1, "humidity", humidityHandler)
+  subscribe(humiditySensorReference, "humidity", humidityHandler)
 }
 
 def installed() {
-    log.debug "${app.label} installed with settings: ${settings}"
-    initialize()
+  log.debug "${app.label} installed with settings: ${settings}"
+  initialize()
 }
 
 def updated() {
-	log.debug "${app.label} updated with settings: ${settings}"
-    unsubscribe()
-	initialize()
+  log.debug "${app.label} updated with settings: ${settings}"
+  unsubscribe()
+  initialize()
 }
 
 def humidityHandler(evt) {
-	def currentHumidity = Integer.valueOf(humiditySensor1.currentValue('humidity'))
-    def referenceHumidity = Integer.valueOf(humiditySensorReference.currentValue('humidity')) + referenceHumidityTreshold
-    
-    log.debug "Current humidity: ${currentHumidity}"
-    log.debug "Reference humidity: ${referenceHumidity}"
-    log.debug "Min: ${humidityMin}, Max: ${humidityMax}"
-    
-	if (currentHumidity >= humidityMax && currentHumidity > referenceHumidity) {
-        log.debug "Current humidity Rose Above ${humidityMax} and ${referenceHumidity}: activating ${switch1}"
-        switch1.on()
-	}
+  def currentHumidity = Integer.valueOf(humiditySensor1.currentValue('humidity'))
+  def referenceHumidity = Integer.valueOf(humiditySensorReference.currentValue('humidity')) + referenceHumidityTreshold
+  
+  log.debug "Current humidity: ${currentHumidity}"
+  log.debug "Reference humidity: ${referenceHumidity}"
+  log.debug "Min: ${humidityMin}, Max: ${humidityMax}"
+  
+  if (currentHumidity >= humidityMax && currentHumidity > referenceHumidity) {
+    log.debug "Current humidity Rose Above ${humidityMax} and ${referenceHumidity}: activating ${switch1}"
+    switch1.on()
+  }
 
-    if (currentHumidity <= humidityMin || currentHumidity <= referenceHumidity) {
-        log.debug "Current humidity Fell Below ${humidityMin} or ${referenceHumidity}: disabling ${switch1}"
-        switch1.off()
-	}
+  if (currentHumidity <= humidityMin || currentHumidity <= referenceHumidity) {
+    log.debug "Current humidity Fell Below ${humidityMin} or ${referenceHumidity}: disabling ${switch1}"
+    switch1.off()
+  }
 }
