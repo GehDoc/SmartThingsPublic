@@ -25,14 +25,14 @@ definition(
 )
 
 preferences {
-  section("Aim for this humidity percentage at this location") {
+  section("Target this % of humidity in the room") {
     input "humiditySensor1", "capability.relativeHumidityMeasurement", title: 'Monitored sensor', required: true
-    input "humidityMin", "number", title: "Target % of humidity", required: true
-    input "humidityMax", "number", title: "Turn on the fan from that % of humidity", required: true
+    input "humidityMin", "number", title: "turn off the fan when <=", required: true
+    input "humidityMax", "number", title: "turn on the fan when >=", required: true
   }
-  section("The target humidity percentage cannot be lower than") {
+  section("Cap the targeted % of humidity, relative to the surrounding % of humidity") {
     input "humiditySensorReference", "capability.relativeHumidityMeasurement", title: 'Reference sensor', required: true
-    input "referenceHumidityTreshold", "number", title: "Tolerate that % offset (target + offset > reference)", required: true
+    input "referenceHumidityTreshold", "number", title: "Tolerated % offset : The fan will stop when (monitored + offset) <= reference", required: true
   }
   section("Control the fan") {
     input "switch1", "capability.switch", title: 'Fan control switch', required: true
