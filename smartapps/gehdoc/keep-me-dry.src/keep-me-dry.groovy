@@ -27,12 +27,12 @@ definition(
 preferences {
   section("Target this % of humidity in the room") {
     input "humiditySensor1", "capability.relativeHumidityMeasurement", title: 'Monitored sensor', required: true
-    input "humidityMin", "number", title: "turn off the fan when <=", required: true
-    input "humidityMax", "number", title: "turn on the fan when >=", required: true
+    input "humidityMin", "number", title: "turn off the fan when <", required: true, defaultValue: 54
+    input "humidityMax", "number", title: "turn on the fan when >=", required: true, defaultValue: 56
   }
   section("Cap the targeted % of humidity, relative to the surrounding % of humidity") {
     input "humiditySensorReference", "capability.relativeHumidityMeasurement", title: 'Reference sensor', required: true
-    input "referenceHumidityTreshold", "number", title: "Tolerated % offset : The fan will stop when (monitored + offset) <= reference", required: true
+    input "referenceHumidityTreshold", "number", title: "Tolerated % offset : The fan will stop when (monitored + offset) < reference", required: true, defaultValue: 4
   }
   section("Control the fan") {
     input "switch1", "capability.switch", title: 'Fan control switch', required: true
@@ -63,12 +63,12 @@ def humidityHandler(evt) {
   log.debug "Reference humidity: ${referenceHumidity}"
   log.debug "Min: ${humidityMin}, Max: ${humidityMax}"
   
-  if (currentHumidity >= humidityMax && currentHumidity > referenceHumidity) {
+  if (currentHumidity >= humidityMax && currentHumidity >= referenceHumidity) {
     log.debug "Current humidity Rose Above ${humidityMax} and ${referenceHumidity}: activating ${switch1}"
     switch1.on()
   }
 
-  if (currentHumidity <= humidityMin || currentHumidity <= referenceHumidity) {
+  if (currentHumidity < humidityMin || currentHumidity < referenceHumidity) {
     log.debug "Current humidity Fell Below ${humidityMin} or ${referenceHumidity}: disabling ${switch1}"
     switch1.off()
   }
