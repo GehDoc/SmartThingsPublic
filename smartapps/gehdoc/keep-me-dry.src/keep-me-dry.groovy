@@ -21,7 +21,7 @@ definition(
   description: "Fan should switch on to dry the room, only if possible regarding the surrounding humidity level.",
   category: "Green Living",
   iconUrl: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@.png",
-  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@2x.png"
+  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@2x.png",
 )
 
 preferences {
@@ -65,17 +65,16 @@ def humidityHandler(evt) {
   def referenceHumidityMax = Integer.valueOf(humiditySensorReference.currentValue('humidity')) + referenceHumidityOffsetMax
   
   log.debug "Current humidity: ${currentHumidity}"
-  log.debug "Reference humidity: ${referenceHumidity}"
   log.debug "Target: ${humidityMin}, Max: ${humidityMax}"
-  log.debug "Caped to : ${referenceHumidityMin}, Max: ${referenceHumidityMax}"
+  log.debug "Capped to : ${referenceHumidityMin}, Max: ${referenceHumidityMax}"
   
   if (currentHumidity >= humidityMax && currentHumidity >= referenceHumidityMax) {
-    log.debug "Current humidity Rose Above ${humidityMax} and ${referenceHumidity}: activating ${switch1}"
+    log.debug "Current humidity Rose Above ${humidityMax} and ${referenceHumidityMax}: activating ${switch1}"
     switch1.on()
   }
 
   if (currentHumidity < humidityMin || currentHumidity < referenceHumidityMin) {
-    log.debug "Current humidity Fell Below ${humidityMin} or ${referenceHumidity}: disabling ${switch1}"
+    log.debug "Current humidity Fell Below ${humidityMin} or ${referenceHumidityMin}: disabling ${switch1}"
     switch1.off()
   }
 }
