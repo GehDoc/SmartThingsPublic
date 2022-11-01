@@ -20,8 +20,8 @@ definition(
   author: "Gérald Hameau",
   description: "Fan should switch on to dry the room, only if possible regarding the surrounding humidity level.",
   category: "Green Living",
-  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@.png",
-  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/temp_thermo@2x.png",
+  iconUrl: "https://s3.amazonaws.com/smartapp-icons/Meta/water_moisture.png",
+  iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Meta/water_moisture@2x.png",
 )
 
 preferences {
